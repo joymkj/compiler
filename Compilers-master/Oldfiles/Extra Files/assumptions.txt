@@ -1,0 +1,6 @@
+Lexer assumptions -
+
+FIELDID size and some other sizes not given, assuming 30
+
+TK_RNUM and TK_NUM are passed around as strings.
+They will be converted to integer as and when required by the Semantic analyzer

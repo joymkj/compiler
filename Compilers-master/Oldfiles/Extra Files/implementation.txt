@@ -1,0 +1,37 @@
+Parse table - 2D array of rules
+
+NTs are rows and terminals are columns. 
+0-53 are tokens i.e., terminals. 54 onwards are NTs.
+Node symbol table- (an array for now)
+provides lookup for symbols and ids
+
+int NodeID(char* name);
+char* NodeName(int id);
+
+Hashtable table(int, char*)
+//1-54 are tokens - 0 is error token
+//-1, -2 and so on negative integers are NTs
+
+Rule rulelookup(int ruleID,Grammar g)
+
+int ParseTable[NONTERM_NO][TERM_NO];
+
+
+Stack parseStk;
+//push(int id) and pop.
+
+typedef struct node* Node
+typedef struct{
+	int NodeID;
+	NodeList children;
+	Node parent;
+}node;
+
+LinkList NodeList
+
+/*
+typedef struct{
+	Node parent
+}
+Tree
+*/

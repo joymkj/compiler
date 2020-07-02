@@ -1,0 +1,4 @@
+%Test Case 0
+_main
+	return;
+end
