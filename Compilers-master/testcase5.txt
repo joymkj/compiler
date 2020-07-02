@@ -1,0 +1,9 @@
+%Test Case 0
+_main
+	type int: b2;
+	type real: b3;
+	b2<---1;
+	b3<---3.00;
+	b3<---b3+b3*b2/b3;
+	return;
+end

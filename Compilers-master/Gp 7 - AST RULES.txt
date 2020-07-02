@@ -1,0 +1,408 @@
+﻿AST Creation Rules
+
+
+GROUP 7
+Prashant Rangarajan 2015B4A70557P
+Vighnesh Hegde 2015B4A70342P
+Biswajit Biswas 2015B5A70418P
+Joy Mukherjee 2015B5A70394P
+
+
+
+
+ 
+1.     program --> otherFunctions mainFunction
+program.addr = new Node(“root”, append (otherFunctions.addr, mainFunction
+.addr))
+        free(otherFunctions, mainFunction)
+ 
+2.     mainFunction --> TK_MAIN stmts TK_END
+mainFunction.addr = stmts.addr
+free(TK_MAIN, stmts, TK_END)
+ 
+3. otherFunctions --> function otherFunctions1
+otherFunctions. addr = append(function.addr, otherFunctions1.addr)
+         free(function otherFunctions1)
+
+
+4. otherFunctions --> eps 
+otherFunctions. addr = new List(NULL)
+ 
+5. function --> TK_FUNID input_par output_par TK_SEM stmts TK_END
+        function.childrenList = new List(input_par.addr, output_par.addr, stmts.addr)
+         function.addr = new Node(“function”,  TK_FUNID.addr, function.childrenList)
+        free(input_par,output_par, TK_SEM, stmts, TK_END)
+ 
+6. input_par --> TK_INPUT TK_PARAMETER TK_LIST TK_SQL parameter_list TK_SQR
+input_par.addr = new Node(“IPL”, parameter_list.addr)
+free(TK_INPUT, TK_PARAMETER, TK_LIST, TK_SQL, parameter_list, TK_SQR)
+ 
+7. output_par --> TK_OUTPUT TK_PARAMETER TK_LIST TK_SQL parameter_list TK_SQR
+output_par.addr = new Node(“OPL”, parameter_list.addr)
+         free(TK_OUTPUT, TK_PARAMETER, TK_LIST, TK_SQL, parameter_list, TK_SQR)
+
+
+8. output_par --> eps
+output_par.addr =  new Node(NULL)
+ 
+9. parameter_list --> dataType TK_ID remaining_list
+parameter_list.fmlDec = new Node(dataType.addr,  TK_ID.addr)
+parameter_list.addr = append(parameter_list.fmlDec, remaining_list.addr)
+        free(dataType,remaining_list)
+ 
+10. dataType --> primitiveDatatype
+dataType.addr = primitiveDatatype.addr
+free(primitiveDatatype)
+ 
+11. dataType --> constructedDatatype
+dataType.addr = constructedDatatype.addr
+free(constructedDatatype) 
+
+
+12. primitiveDatatype --> TK_INT
+primitiveDatatype.addr =  TK_INT.addr
+ 
+13. primitiveDatatype --> TK_REAL
+primitiveDatatype.addr =  TK_REAL.addr
+ 
+14. constructedDatatype --> TK_RECORD TK_RECORDID
+constructedDatatype.addr = new Node(“record”, TK_RECORDID.addr)
+free(TK_RECORD)
+ 
+15. remaining_list --> TK_COMMA parameter_list
+        remaining_list.addr = parameter_list.addr
+        free(TK_COMMA, parameter_list)
+
+
+16. remaining_list  -->eps
+ remaining_list.addr =  new List(NULL)
+
+
+17. stmts --> typeDefinitions declarations otherStmts returnStmt
+stmts.childrenList = new List(typeDefinitions.addr, declarations.addr, otherStmts.addr, returnStmt.addr)
+        stmts.addr = new Node(“statements”, stmts.childrenList)
+        free(typeDefinitions, declarations, otherStmts, returnStmt)
+
+
+18. typeDefinitions --> typeDefinition typeDefinitions1
+        typeDefinitions.addr = new Node(“TD”, append(typeDefinition.addr, typeDefinitions1.addr))
+        free(typeDefinition, typeDefinitions1)
+
+
+19. typeDefinitions --> eps
+typeDefinitions.addr = new List(NULL)
+
+
+20. typeDefinition --> TK_RECORD TK_RECORDID fieldDefinitions TK_ENDRECORD TK_SEM
+        typeDefinition.addr = new Node(“TD”, TK_RECORDID.addr, fieldDefinitions.addr)
+        free(TK_RECORD, fieldDefinitions, TK_ENDRECORD, TK_SEM)
+
+
+21. fieldDefinitions --> fieldDefinition1 fieldDefinition2 moreFields
+        fieldDefinitions.childrenList=  new List(fieldDefinition1.addr, fieldDefinition2.addr, moreFields.addr)
+        fieldDefinitions.addr =  new Node(“fieldDef”, fieldDefinitions.childrenList)
+        free(fieldDefinition1, fieldDefinition2, moreFields)
+
+
+22. fieldDefinition --> TK_TYPE primitiveDatatype TK_COLON TK_FIELDID TK_SEM
+        fieldDefinition.addr = new Node(“FIELD”,TK_FIELDID.addr,primitiveDatatype.addr)
+        free(TK_TYPE, primitiveDatatype, TK_COLON, TK_SEM)
+
+
+23. moreFields --> fieldDefinition moreFields
+        moreFields.addr = append(fieldDefinition.addr, moreFields.addr)
+        free(fieldDefinition moreFields)
+
+
+24. moreFields --> eps
+        moreFields.addr = new List(NULL)
+
+
+25. declarations --> declaration declarations
+        declarations.addr = append( declaration.addr, declarations.addr)
+        free(declaration, declarations)
+
+
+26. declarations --> eps
+        declarations.addr = new List(NULL)
+
+
+27. declaration --> TK_TYPE dataType TK_COLON TK_ID global_or_not TK_SEM
+        declaration.addr = new Node(“decl”, dataType.addr, TK_ID.addr, global_or_not.addr)
+        free(TK_TYPE, dataType, TK_COLON, global_or_not, TK_SEM)
+
+
+28. global_or_not --> TK_COLON TK_GLOBAL
+        global_or_not.addr = TK_GLOBAL.addr
+        free(TK_COLON)
+
+
+29. global_or_not --> eps
+        global_or_not.addr = NULL
+
+
+30. otherStmts --> stmt otherStmts1
+        otherStmts.addr = append(stmt.addr,otherStmts1.addr)
+        free(stmt, otherStmts1)
+
+
+31. otherStmts --> eps
+        otherStmts.addr = new List(NULL)
+
+
+32. stmt --> assignmentStmt
+        stmt.addr = assignmentStmt.addr
+        free(assignmentStmt)
+
+
+33. stmt --> iterativeStmt
+        stmt.addr = iterativeStmt.addr
+        free(iterativeStmt)
+
+
+34. stmt --> conditionalStmt
+        stmt.addr = conditionalStmt.addr
+        free(conditionalStmt)
+
+
+35. stmt --> ioStmt
+        stmt.addr = ioStmt.addr
+        free(ioStmt)
+
+
+36. stmt --> funCallStmt
+stmt.addr = funCallStmt.addr
+free(funCallStmt)
+
+
+37. assignmentStmt --> singleOrRecId TK_ASSIGNOP arithmeticExpression TK_SEM
+        assignmentStmt.addr =  new Node(“AS”,singleOrRecId.addr,arithmeticExpression.addr)
+        free(singleOrRecId, TK_ASSIGNOP, arithmeticExpression, TK_SEM)
+
+
+38. singleOrRecId --> TK_ID new_24
+        singleOrRecId.addr = new Node(“SorR”,TK_ID.addr,new_24.addr)
+        free(new_24)
+
+
+39. new_24 --> eps
+        new_24.addr = NULL
+
+
+40. new_24 --> TK_DOT TK_FIELDID
+        new_24.addr = TK_FIELDID.addr
+        free(TK_DOT)
+
+
+41. funCallStmt --> outputParameters TK_CALL TK_FUNID TK_WITH TK_PARAMETERS inputParameters TK_SEM
+        funCallStmt.addr = new Node (“FunCall”,TK_FUNID.addr,outputParameters.addr, inputParameters.addr)
+        free(outputParameters, TK_CALL, TK_WITH, TK_PARAMETERS, inputParameters, TK_SEM)
+
+
+42. outputParameters --> TK_SQL idList TK_SQR TK_ASSIGNOP
+        outputParameters.addr = idList.addr
+        free(TK_SQL, idList, TK_SQR, TK_ASSIGNOP)
+
+
+43. outputParameters --> eps
+        outputParameters.addr = new List(NULL)
+
+
+44. inputParameters --> TK_SQL idList TK_SQR
+        inputParameters.addr = idlList.addr
+        free(TK_SQL, idList, TK_SQR)
+
+
+45. iterativeStmt --> TK_WHILE TK_OP booleanExpression TK_CL stmt otherStmts TK_ENDWHILE
+        insertAtFront(otherStmts.addr,stmt.addr)
+        iterativeStmt.addr = new Node(“iterStmt”,boolExpression.addr,otherStmts.addr)
+        free(TK_WHILE, TK_OP, booleanExpression ,TK_CL, stmt, otherStmts, TK_ENDWHILE
+)
+
+
+46. conditionalStmt --> TK_IF TK_OP booleanExpression TK_CL TK_THEN stmt otherStmts elsePart
+        insertAtFront(otherStmts.addr,stmt.addr)
+        conditionalStmt.addr = new Node(“condStmt”,boolExpression.addr,otherStmts.addr,
+elsePart.addr)
+        free(TK_IF, TK_OP, booleanExpression, TK_CL, TK_THEN, stmt, otherStmts, elsePart
+)
+
+
+47. elsePart --> TK_ELSE stmt otherStmts TK_ENDIF
+        elsePart.addr = insertAtFront(otherStmts.addr,stmt.addr)
+free(TK_ELSE, stmt, otherStmts, TK_ENDIF)        
+
+
+48. elsePart --> TK_ENDIF
+        elsePart.addr = NULL
+        free(TK_ENDIF)
+
+
+49. ioStmt --> TK_READ TK_OP singleOrRecId TK_CL TK_SEM
+        ioStmt.addr = new Node(“read”, singleOrRecId.addr)
+        free(TK_READ, TK_OP, singleOrRecId, TK_CL, TK_SEM)
+
+
+50. ioStmt --> TK_WRITE TK_OP all TK_CL TK_SEM
+        ioStmt.addr = new Node(“write”, all.addr)
+free(TK_WRITE TK_OP all TK_CL TK_SEM)
+
+
+51. all --> TK_NUM
+        all.addr  =  TK_NUM.addr
+
+
+52. all --> TK_RNUM
+        all.addr  =  TK_RNUM.addr
+
+
+53. all --> TK_ID new_24
+        all.addr  =  new Node(“SorR”, TK_ID.addr, new_24.addr)
+        free(new_24)
+
+
+54. arithmeticExpression --> term expPrime
+arithmeticExpression.addr = insertLeftOperand(expPrime.addr,term.addr) 
+//inserting RHS into LHS
+free(term, expPrime)
+
+
+55. expPrime --> lowPrecedenceOperators term expPrime1
+        insertLeftOperand(expPrime1.addr, term.addr) //if NULL, it returns only term.addr
+        expPrime.addr = new Node(“E”,NULL, lowPrecedenceOperators.addr, expPrime1.addr)
+        free(lowPrecedenceOperators, term, expPrime1)
+
+
+56. expPrime --> eps
+        expPrime.addr = NULL
+
+
+57. term --> factor termPrime
+        insertLeftOperand(termPrime.addr,factor.addr)  //inserting RHS into LHS
+        free(factor, termPrime)
+
+
+58. termPrime --> highPrecedenceOperators factor termPrime1
+        insertLeftOperand(termPrime1.addr, factor.addr)  //if NULL, it returns only factor.addr
+        termPrime.addr = new Node(“E”, NULL, highPrecedenceOperators.addr, termPrime1.addr)
+        free(highPrecedenceOperators, factor, termPrime1)        
+
+
+59. termPrime --> eps
+        termPrime.addr = NULL
+
+
+60. factor --> TK_OP arithmeticExpression TK_CL
+        factor.addr = arithmeticExpression.addr
+        free(TK_OP, arithmeticExpression, TK_CL)
+
+
+61. factor --> all
+        factor.addr = all.addr
+        free(all)
+
+
+62. highPrecedenceOperators --> TK_MUL
+        highPrecedenceOperators.addr =  TK_MUL.addr
+
+
+63. highPrecedenceOperators --> TK_DIV
+highPrecedenceOperators.addr =  TK_DIV.addr
+
+
+64. lowPrecedenceOperators --> TK_PLUS
+        lowPrecedenceOperators.addr  = TK_PLUS.addr
+
+
+65. lowPrecedenceOperators --> TK_MINUS
+lowPrecedenceOperators.addr =  TK_MINUS.addr
+
+
+66. booleanExpression --> TK_OP booleanExpression1 TK_CL logicalOp TK_OP booleanExpression2 TK_CL
+        booleanExpression.addr = new  Node(“bool”, booleanExpression1.addr, logicalOp.addr,booleanExpression2.addr)
+        free(TK_OP, booleanExpression1, TK_CL, logicalOp, TK_OP, booleanExpression2 TK_CL)
+
+
+
+
+67. booleanExpression --> var relationalOp var1
+        booleanExpression.addr = new Node(“bool”,var.addr,relationalOp.addr,var1.addr)
+        free(var, relationalOp, var1)
+
+
+
+
+68. booleanExpression --> TK_NOT TK_OP booleanExpression1 TK_CL
+        booleanExpression.addr = new Node(“boolNeg”,TK_NOT.addr, booleanExpression1.addr)
+        free(TK_NOT, TK_OP, booleanExpression1, TK_CL)
+
+
+69. var --> TK_ID
+var.addr = TK_ID.addr
+
+
+70. var --> TK_NUM
+var.addr = TK_NUM.addr
+
+
+71. var --> TK_RNUM
+        var.addr = TK_RNUM.addr
+
+
+72. logicalOp --> TK_AND
+        logicalOp.addr =  TK_AND.addr
+
+
+73. logicalOp --> TK_OR
+        logicalOp.addr =  TK_OR.addr
+
+
+74. relationalOp --> TK_LT
+        relationalOp.addr =  TK_LT.addr
+
+
+75. relationalOp --> TK_LE
+        relationalOp.addr =  TK_LE.addr
+
+
+76. relationalOp --> TK_EQ
+relationalOp.addr =  TK_EQ.addr
+
+
+77. relationalOp --> TK_GT
+relationalOp.addr =  TK_GT.addr
+        
+78. relationalOp --> TK_GE
+        relationalOp.addr =  TK_GE.addr
+
+
+79. relationalOp --> TK_NE
+        relationalOp.addr =  TK_NE.addr
+
+
+80. returnStmt --> TK_RETURN optionalReturn TK_SEM
+        returnStmt.addr = new Node(“ret”, optionalReturn.addr)
+        free(optionalReturn, TK_RETURN, TK_SEM)
+
+
+81. optionalReturn --> TK_SQL idList TK_SQR
+optionalReturn.addr = idList.addr
+free(TK_SQL, idList ,TK_SQR)
+
+
+82. optionalReturn --> eps
+        optionalReturn.addr = NULL
+
+
+83. idList --> TK_ID more_ids
+        idList.addr = append(TK_ID.addr, more_ids.addr)
+        free(more_ids)
+
+
+84. more_ids --> TK_COMMA idList
+        more_ids.addr = idList.addr
+        free(TK_COMMA, idList)
+
+
+85. more_ids --> eps
+        more_ids.addr = new List(NULL)

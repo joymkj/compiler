@@ -1,0 +1,53 @@
+_swapints
+input parameter list [int b2b, int b2c]   
+output parameter list[int c2b, int c2c]; 
+	c2b<---b2c;
+	c2c<---b2b;
+	return [c2b, c2c]; 
+end 
+
+_swaprecs
+input parameter list [record #rec d2c]   
+output parameter list[record #rec d5c, record #rec d2d]; 
+	type int : b3;
+	[b3,b3]<--- call _swapints with parameters [b3,b3];
+	[b3,b3]<--- call _swapints with parameters [b3,b3];
+	return [d2c, d2c];
+end
+
+
+_main 
+	record  #rec 
+		type int : len; 
+		type int : height; 
+  	endrecord; 
+  	 
+
+  	record  #rect
+		type int : lent; 
+		type int : heightt; 
+  	endrecord; 
+
+	type int : b5;
+	type int : b4;
+	type int : b6;
+	type record #rec : b2;
+	type record #rec : b3;
+	type record #rect : b7;
+	type record #rec : d5c; 
+	type record #rec: c2;
+	b2.len<---5;
+	b2.height <---7;
+
+	[b2, c2]<--- call _swaprecs with parameters [b2]; 
+	while(~(b4 <= b5))
+		b3 <--- b2+b7;
+		b4 <--- b5 - b5;
+		b3 <--- b2 + b3;
+		c2 <--- b2 + b3;
+		[b4, b6]<--- call _swapints with parameters [b6,b5];
+	endwhile
+	write(b2);
+	write(c2);
+	return;
+end
